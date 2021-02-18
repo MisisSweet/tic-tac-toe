@@ -1,0 +1,55 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Game";
+}
+<style>
+    .wrapper {
+        background-image: url("./picturs/fon.png");
+        background-size: cover;
+        width: 100vw;
+        height: 100vh;
+        padding-top: 20px;
+    }
+
+    html, body, .container {
+        height: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+    .cell{
+    width: 100px;
+    height:100px;
+    background-color:azure;
+    }
+    table{
+    margin: auto;
+    }
+</style>
+<div class="wrapper">
+    <table>
+        <tbody>
+            <tr>
+                <th scope="row">
+                    <button class="cell"></button>
+                </th>
+                <td><button class="cell"></button></td>
+                <td><button class="cell"></button></td>
+            </tr>
+            <tr>
+                <th scope="row"><button class="cell"></button></th>
+                <td><button class="cell"></button></td>
+                <td><button class="cell"></button></td>
+            </tr>
+            <tr>
+                <th scope="row"><button class="cell"></button></th>
+                <td><button class="cell"></button></td>
+                <td><button class="cell"></button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

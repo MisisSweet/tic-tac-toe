@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "tagify@3.22.3",
+      "destination": "wwwroot/lib/tagify/"
+    }
+  ]
+}

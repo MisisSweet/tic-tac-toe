@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<style>
+    .btn-list {
+        margin: 0;
+        top: 50%;
+        left: 50%;
+        transform: translate(0, -50%);
+        transform: translate(-50%, 0);
+        
+    }
+
+    .wrapper {
+        background-image: url("./picturs/fon.png");
+        background-size:cover;
+        width: 100vw;
+        height: 100vh;
+    }
+    html, body, .container {
+        height: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        overflow: auto; /* добавить полосу прокрутки */
+    }
+    .btn{
+        border: 2px solid dodgerblue !important;
+        background-color: azure !important;
+    }
+    h1 {
+        color: dodgerblue !important;
+    }
+</style>
+<div class="wrapper">
+    <div class="btn-list position-absolute">
+        <form method="post" class="d-flex flex-column" asp-controller="HomeController">
+            <button class="btn btn-primary" asp-action="onTapFindGame"><h1>Подключиться к игре</h1></button>
+            <h1> </h1>
+            <button class="btn btn-primary" asp-action="onTapCreateGame"><h1>Создать игру</h1></button>
+        </form>
+
+    </div>
+</div>

@@ -1,0 +1,85 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "CreateGame";
+}
+<style>
+    .wrapper {
+        background-image: url("./picturs/fon.png");
+        background-size: cover;
+        width: 100vw;
+        height: 100vh;
+        padding-top: 20px;
+    }
+
+    html, body, .container {
+        height: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
+    .tagify {
+        width: 100%;
+        max-width: 700px;
+        min-width: 700px;
+    }
+
+    .some_class_name {
+        background-color: azure;
+        margin-bottom: 20px;
+    }
+
+    .name {
+        display: block;
+        padding: 10px;
+    }
+
+
+    .btn {
+        border: 2px solid dodgerblue !important;
+        background-color: azure !important;
+    }
+
+    h5 {
+        color: dodgerblue !important;
+    }
+    form {
+        width:min-content;
+        margin: 0 auto;
+    }
+</style>
+<div class="wrapper">
+    <div class="mr-auto ml-auto">
+        <form>
+            <div class="inputcontainer">
+                <input type="text" name="name" class="name some_class_name tagify" placeholder="Введите название игры">
+            </div>
+
+            <input name='tags'
+                   class='some_class_name'
+                   placeholder='Введите теги'
+                   value='' of Objects)
+                   data-blacklist='.NET,PHP'>
+            <p><input id="Radio1" type="radio" name="char" value="X" />X</p>
+            <p><input id="Radio1" type="radio" name="char" value="O" />O</p>
+            <div class="d-flex justify-content-around">
+                <button class="btn btn-primary" asp-action="onTapCreate"><h5>Создать</h5></button>
+                <button class="btn btn-primary" asp-action="onTapCanlce"><h5>Отменить</h5></button>
+            </div> 
+            
+        </form>
+    </div>
+    
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/tagify/tagify.min.js"></script>
+<script>
+    var inputElm = document.querySelector('input[name=tags]');
+
+    // initialize Tagify on the above input node reference
+    new Tagify(inputElm);
+</script>
