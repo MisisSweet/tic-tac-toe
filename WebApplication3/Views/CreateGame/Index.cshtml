@@ -47,16 +47,16 @@
     h5 {
         color: dodgerblue !important;
     }
-    form {
+    .form {
         width:min-content;
         margin: 0 auto;
     }
 </style>
 <div class="wrapper">
     <div class="mr-auto ml-auto">
-        <form>
+        <div class="form">
             <div class="inputcontainer">
-                <input type="text" name="name" class="name some_class_name tagify" placeholder="Введите название игры">
+                <input id="name" type="text" name="name" class="name some_class_name tagify" placeholder="Введите название игры">
             </div>
 
             <input name='tags'
@@ -64,22 +64,47 @@
                    placeholder='Введите теги'
                    value='' of Objects)
                    data-blacklist='.NET,PHP'>
-            <p><input id="Radio1" type="radio" name="char" value="X" />X</p>
-            <p><input id="Radio1" type="radio" name="char" value="O" />O</p>
             <div class="d-flex justify-content-around">
-                <button class="btn btn-primary" asp-action="onTapCreate"><h5>Создать</h5></button>
+                <button class="btn btn-primary" onclick="createGame()"><h5>Создать</h5></button>
                 <button class="btn btn-primary" asp-action="onTapCanlce"><h5>Отменить</h5></button>
-            </div> 
-            
-        </form>
+            </div>
+        </div>
+        
     </div>
     
 </div>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/tagify/tagify.min.js"></script>
 <script>
-    var inputElm = document.querySelector('input[name=tags]');
-
+    var inputTags = document.querySelector('input[name=tags]');
+    var inputName = document.querySelector('input[name=name]');
     // initialize Tagify on the above input node reference
-    new Tagify(inputElm);
+    new Tagify(inputTags);
+
+    
+
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/game")
+        .build();
+    hubConnection.start();
+    hubConnection.on("onCreateGame", (id) => {
+        location.href = `/Game/Index?id=${id}`;
+    });
+
+    function createGame() {
+        if (inputName.value === "" && inputTags.value === "") {
+            alert("Все поля должны быть заполнены");
+        } else {
+            var game = {
+                name: inputName.value,
+                tags: JSON.parse(inputTags.value),
+                players: 0
+            };
+
+            hubConnection.invoke("CreateGame", game);
+            console.log("create game");
+            console.log(game);
+        }
+
+    }
 </script>

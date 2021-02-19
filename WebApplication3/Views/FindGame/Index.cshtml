@@ -1,17 +1,9 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model FindGameModel
 @{
     ViewData["Title"] = "FindGame";
 }
 <style>
-    .wrapper {
-        background-image: url("./picturs/fon.png");
-        background-size: cover;
-        width: 100vw;
-        height: 100vh;
-        padding-top: 20px;
-    }
+.wrapper { background-image: url("https://localhost:44341/picturs/fon.png"); background-size: cover; width: 100vw; height: 100vh; padding-top: 20px; }
 
     html, body, .container {
         height: 100% !important;
@@ -34,9 +26,10 @@
         width: 100%;
         max-width: 700px;
     }
-    .some_class_name{
-    background-color: azure;
-    margin: 0 auto;
+
+    .some_class_name {
+        background-color: azure;
+        margin: 0 auto;
     }
 </style>
 <div class="wrapper">
@@ -48,77 +41,49 @@
                data-blacklist='.NET,PHP'>
     </form>
     <div class="d-flex justify-content-around flex-wrap">
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Игра</h5>
-                <p class="card-text">Теги</p>
-                <p class="card-text">Количество игроков</p>
-                <a href="#" class="btn btn-primary">Присоединиться</a>
+        @foreach (Game game in Model.games as Game[])
+        {
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Игра: @game.name</h5>
+                    <p class="card-text">Теги: @game.tagsStr</p>
+                    <p class="card-text">Количество игроков: @game.players/2</p>
+                    @if (game.players < 2)
+                    {
+                        <a href="/Game/Index?id=@game.id" class="btn btn-primary">Присоединиться</a>
+                    }
+                    else
+                    {
+                        <a href="#" class="btn btn-secondary btn-lg disabled">Присоединиться</a>
+                    }
+
+                </div>
             </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Игра</h5>
-                <p class="card-text">Теги</p>
-                <p class="card-text">Количество игроков</p>
-                <a href="#" class="btn btn-primary">Присоединиться</a>
-            </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Игра</h5>
-                <p class="card-text">Теги</p>
-                <p class="card-text">Количество игроков</p>
-                <a href="#" class="btn btn-primary">Присоединиться</a>
-            </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Игра</h5>
-                <p class="card-text">Теги</p>
-                <p class="card-text">Количество игроков</p>
-                <a href="#" class="btn btn-primary">Присоединиться</a>
-            </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Игра</h5>
-                <p class="card-text">Теги</p>
-                <p class="card-text">Количество игроков</p>
-                <a href="#" class="btn btn-primary">Присоединиться</a>
-            </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Игра</h5>
-                <p class="card-text">Теги</p>
-                <p class="card-text">Количество игроков</p>
-                <a href="#" class="btn btn-primary">Присоединиться</a>
-            </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Игра</h5>
-                <p class="card-text">Теги</p>
-                <p class="card-text">Количество игроков</p>
-                <a href="#" class="btn btn-primary">Присоединиться</a>
-            </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Игра</h5>
-                <p class="card-text">Теги</p>
-                <p class="card-text">Количество игроков</p>
-                <a href="#" class="btn btn-primary">Присоединиться</a>
-            </div>
-        </div>
+        }
     </div>
 </div>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/tagify/tagify.min.js"></script>
 <script>
     var inputElm = document.querySelector('input[name=tags]'),
-        whitelist = ["game", "p2p", "RUS", "ENG", "zero", "cross"]
+        whitelist = JSON.parse('@Model.getJsonListTag'.replaceAll('&quot;', '"')),
+        selectlist = JSON.parse('@Model.getJsonListSelTag'.replaceAll('&quot;', '"'));
+
+    tags = '';
+    for (i = 0; i < selectlist.length; i++) {
+        tags += `${selectlist[i]},`;
+    }
+    inputElm.value = tags;
+    console.log(whitelist);
+
+    function searchGame() {
+        console.log(selectlist);
+        url = "/FindGame/Index?";
+        for (i = 0; i < selectlist.length; i++) {
+            url += `&tags=${selectlist[i]}`;
+        }
+        location.href = url;
+    }
 
     // initialize Tagify on the above input node reference
     var tagify = new Tagify(inputElm, {
@@ -132,13 +97,7 @@
     tagify.on('add', onAddTag)
         .on('remove', onRemoveTag)
         .on('input', onInput)
-        .on('edit', onTagEdit)
-        .on('invalid', onInvalidTag)
-        .on('click', onTagClick)
-        .on('focus', onTagifyFocusBlur)
-        .on('blur', onTagifyFocusBlur)
-        .on('dropdown:hide dropdown:show', e => console.log(e.type))
-        .on('dropdown:select', onDropdownSelect)
+
 
     var mockAjax = (function mockAjax() {
         var timeout;
@@ -152,19 +111,20 @@
 
     // tag added callback
     function onAddTag(e) {
-        console.log("onAddTag: ", e.detail);
-        console.log("original input value: ", inputElm.value)
-        tagify.off('add', onAddTag) // exmaple of removing a custom Tagify event
+        console.log("original input value: ", inputElm.value);
+        selectlist.push(e.detail.data.value);
+        searchGame();
     }
 
     // tag remvoed callback
     function onRemoveTag(e) {
         console.log("onRemoveTag:", e.detail, "tagify instance value:", tagify.value)
+        selectlist.splice(selectlist.indexOf(e.detail.data.value), 1);
+        searchGame();
     }
 
     // on character(s) added/removed (user is typing/deleting)
     function onInput(e) {
-        console.log("onInput: ", e.detail);
         tagify.settings.whitelist.length = 0; // reset current whitelist
         tagify.loading(true).dropdown.hide.call(tagify) // show the loader animation
 
@@ -178,28 +138,5 @@
                 // render the suggestions dropdown.
                 tagify.loading(false).dropdown.show.call(tagify, e.detail.value);
             })
-    }
-
-    function onTagEdit(e) {
-        console.log("onTagEdit: ", e.detail);
-    }
-
-    // invalid tag added callback
-    function onInvalidTag(e) {
-        console.log("onInvalidTag: ", e.detail);
-    }
-
-    // invalid tag added callback
-    function onTagClick(e) {
-        console.log(e.detail);
-        console.log("onTagClick: ", e.detail);
-    }
-
-    function onTagifyFocusBlur(e) {
-        console.log(e.type, "event fired")
-    }
-
-    function onDropdownSelect(e) {
-        console.log("onDropdownSelect: ", e.detail)
     }
 </script>

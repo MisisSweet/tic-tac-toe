@@ -24,6 +24,7 @@ namespace WebApplication3
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,11 +47,18 @@ namespace WebApplication3
 
             app.UseAuthorization();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<GameHub>("/game");
             });
         }
     }

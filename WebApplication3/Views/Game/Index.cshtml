@@ -1,6 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 @{
     ViewData["Title"] = "Game";
 }
@@ -21,13 +19,15 @@
         margin: 0;
         padding: 0;
     }
-    .cell{
-    width: 100px;
-    height:100px;
-    background-color:azure;
+
+    .cell {
+        width: 100px;
+        height: 100px;
+        background-color: azure;
     }
-    table{
-    margin: auto;
+
+    table {
+        margin: auto;
     }
 </style>
 <div class="wrapper">
@@ -53,3 +53,28 @@
         </tbody>
     </table>
 </div>
+<script>
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+        return false;
+    };
+
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/game")
+        .build();
+
+    hubConnection.start().then(() => {
+        hubConnection.invoke("JoinGame", hubConnection["connection"]["connectionId"], getUrlParameter('id'));
+    });
+</script>
