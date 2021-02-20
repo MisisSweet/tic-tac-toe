@@ -3,13 +3,7 @@
     ViewData["Title"] = "Game";
 }
 <style>
-    .wrapper {
-        background-image: url("./picturs/fon.png");
-        background-size: cover;
-        width: 100vw;
-        height: 100vh;
-        padding-top: 20px;
-    }
+    
 
     html, body, .container {
         height: 100% !important;
@@ -29,31 +23,53 @@
     table {
         margin: auto;
     }
+    p{
+        width:100%;
+        color: azure;
+    }
+    #error{
+        color:red;
+    }
+    button{
+    font-size:20pt;
+    }
 </style>
 <div class="wrapper">
+    <p id="numberPlayer" align="center">Вы игрок </p>
+    <p id="info" align="center"></p>
     <table>
         <tbody>
             <tr>
                 <th scope="row">
-                    <button class="cell"></button>
+                    <button id="00" class="cell" onclick="onStep(0,0)"></button>
                 </th>
-                <td><button class="cell"></button></td>
-                <td><button class="cell"></button></td>
+                <td><button id="01" class="cell" onclick="onStep(0,1)"></button></td>
+                <td><button id="02" class="cell" onclick="onStep(0,2)"></button></td>
             </tr>
             <tr>
-                <th scope="row"><button class="cell"></button></th>
-                <td><button class="cell"></button></td>
-                <td><button class="cell"></button></td>
+                <th scope="row"><button id="10" class="cell" onclick="onStep(1,0)"></button></th>
+                <td><button id="11" class="cell" onclick="onStep(1,1)"></button></td>
+                <td><button id="12" class="cell" onclick="onStep(1,2)"></button></td>
             </tr>
             <tr>
-                <th scope="row"><button class="cell"></button></th>
-                <td><button class="cell"></button></td>
-                <td><button class="cell"></button></td>
+                <th scope="row"><button id="20" class="cell" onclick="onStep(2,0)"></button></th>
+                <td><button id="21" class="cell" onclick="onStep(2,1)"></button></td>
+                <td><button id="22" class="cell" onclick="onStep(2,2)"></button></td>
             </tr>
         </tbody>
     </table>
+    <p id="error" align="center"></p>
 </div>
 <script>
+    const cells = [
+        [document.getElementById('00'), document.getElementById('01'), document.getElementById('02')],
+        [document.getElementById('10'), document.getElementById('11'), document.getElementById('12')],
+        [document.getElementById('20'), document.getElementById('21'), document.getElementById('22')],
+    ]
+    const numberPlayer = document.getElementById('numberPlayer');
+    const info = document.getElementById('info');
+    const error = document.getElementById('error');
+
     var getUrlParameter = function getUrlParameter(sParam) {
         var sPageURL = window.location.search.substring(1),
             sURLVariables = sPageURL.split('&'),
@@ -70,11 +86,63 @@
         return false;
     };
 
+    function onUpdateArea(area) {
+        console.log("update game");
+        console.log(area);
+        arr = JSON.parse(area);
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                cells[i][j].textContent = arr[i][j] == 0 ? '' : arr[i][j] == 1 ? 'X' : 'O';
+            }
+        }
+    }
+    function onUpdateGame(area, result, isFirstPlayerStep) {
+        onUpdateArea(area);
+        error.textContent = "";
+        info.textContent = isFirstPlayerStep ? 'Сейчас ход игрока 1' : 'Сейчас ход игрока 2';
+        console.log(result);
+        switch (result) {
+            case 1: {
+                alert("Победил игрок 1");
+                location.href = "../Home/Index";
+                break;
+            }
+            case 2: {
+                alert("Победил игрок 2");
+                location.href = "../Home/Index";
+                break;
+            }
+            case 3: {
+                alert("Ничья");
+                location.href = "../Home/Index";
+                break;
+            }
+        }
+    }
+
+    function onStep(x, y) {
+        if (cells[x][y].textContent !== '')
+            error.textContent = "Эта ячейка уже занята";
+        else
+            hubConnection.invoke("Step", gameId, playerNum, x, y);
+    }
+
     const hubConnection = new signalR.HubConnectionBuilder()
         .withUrl("/game")
         .build();
 
+    const gameId = getUrlParameter('id');
+    playerNum = 0;
+    hubConnection.on("loadGame", (area, number, isFirstPlayerStep) => {
+        playerNum = number;
+        numberPlayer.textContent += number;
+        info.textContent = isFirstPlayerStep ? 'Сейчас ход игрока 1' : 'Сейчас ход игрока 2';
+        onUpdateArea(area);
+    });
+    hubConnection.on("onUpdateGame", (area, result, isFirstPlayerStep) => onUpdateGame(area, result, isFirstPlayerStep));
+    hubConnection.on("error", (value) => error.textContent = value);
+    hubConnection.on("onExitGame", () => { alert("Комната заполнена"); location.href = "../FindGame/Index";})
     hubConnection.start().then(() => {
-        hubConnection.invoke("JoinGame", hubConnection["connection"]["connectionId"], getUrlParameter('id'));
+        hubConnection.invoke("JoinGame", hubConnection["connection"]["connectionId"], gameId);
     });
 </script>
